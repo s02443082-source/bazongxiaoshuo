@@ -26,6 +26,39 @@
 - 👉 控制写作风格与叙事一致性
 - 👉 最终生成完整章节甚至整本小说
 
+## 给 OpenClaw / 自动安装代理
+
+如果你是把这个仓库直接交给 OpenClaw、Codex 或别的安装代理，优先让它执行下面其中一种：
+
+```bash
+bash ./install.sh
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+安装脚本会自动完成这些动作：
+
+- 检查 Node 版本是否达到 `20.19+`
+- 启用 `corepack`
+- 自动创建 `server/.env`
+- 自动创建 `client/.env`
+- 默认把 `RAG_ENABLED` 调成 `false`，避免首次启动就卡在 Qdrant
+- 安装依赖并执行一次 `pnpm build`
+
+完成后，本地开发直接启动：
+
+```bash
+bash ./start.sh
+```
+
+或在 Windows 上执行：
+
+```bat
+start.bat
+```
+
 
 
 ## 项目定位
@@ -271,6 +304,11 @@
 - `macOS / Linux`：用根目录 `start.sh` 一键启动开发环境
 - `Windows`：用根目录 `start.bat` 一键启动开发环境
 - `VPS / Docker`：用根目录 `docker-compose.yml` 直接起服务
+
+如果你希望“让安装代理尽量自己完成安装”，优先使用根目录：
+
+- `install.sh`
+- `install.ps1`
 
 如果你只是自己本地使用，优先走 `start.sh` / `start.bat`。  
 如果你要部署到服务器，优先走 `Docker Compose`。

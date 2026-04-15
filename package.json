@@ -25,6 +25,7 @@
     "db:restore": "pnpm --filter @ai-novel/server db:restore",
     "db:seed": "pnpm --filter @ai-novel/server db:seed",
     "db:studio": "pnpm --filter @ai-novel/server db:studio",
+    "setup": "bash ./install.sh",
     "start:server": "pnpm --filter @ai-novel/server start",
     "preview:client": "pnpm --filter @ai-novel/client preview --host 0.0.0.0 --port 5173",
     "start:prod": "bash -lc 'pnpm --filter @ai-novel/server prisma:generate && pnpm --filter @ai-novel/server prisma:push && (pnpm start:server &) && pnpm preview:client'",
