@@ -1,0 +1,15 @@
+node_modules
+client/node_modules
+server/node_modules
+shared/node_modules
+.git
+.gitignore
+.logs
+client/dist
+server/dist
+server/dev.db
+server/dev.db-journal
+server/.env
+client/.env
+client/.env.local
+pnpm-debug.log

@@ -1,5 +1,7 @@
-# AI 小说创作工作台 / AI Novel Production Engine
+# 小说导演台 / Novel Director Console
 一个面向长篇小说创作的 AI Native 开源项目。
+
+> Based on [ExplosiveCoderflome/AI-Novel-Writing-Assistant](https://github.com/ExplosiveCoderflome/AI-Novel-Writing-Assistant), customized and productized for a personal deployment workflow.
 
 当前开发主线：
 `Creative Hub + 自动导演开书 + 整本生产主链 + 写法引擎`
@@ -262,6 +264,17 @@
   也可以先把项目跑起来，再在页面里配置
 - 如果你要完整体验知识库 / RAG，再额外准备可用的 Qdrant
 
+### 安装形态
+
+当前仓库已经整理成三种常用方式：
+
+- `macOS / Linux`：用根目录 `start.sh` 一键启动开发环境
+- `Windows`：用根目录 `start.bat` 一键启动开发环境
+- `VPS / Docker`：用根目录 `docker-compose.yml` 直接起服务
+
+如果你只是自己本地使用，优先走 `start.sh` / `start.bat`。  
+如果你要部署到服务器，优先走 `Docker Compose`。
+
 ### 1. 安装依赖
 
 ```bash
@@ -395,6 +408,18 @@ Copy-Item client/.env.example client/.env
 pnpm dev
 ```
 
+也可以直接用根目录脚本：
+
+```bash
+# macOS / Linux
+bash ./start.sh
+```
+
+```bat
+:: Windows
+start.bat
+```
+
 如果你已经复制好了 `server/.env` 和 `client/.env`，默认就是直接运行这一条。
 不需要在首次启动前手动再执行 `prisma generate`、`prisma db push` 或 `pnpm db:migrate`。
 
@@ -412,6 +437,30 @@ pnpm dev
 1. 打开 `http://localhost:5173/settings`，至少配置一组可用的模型供应商 API Key
 2. 打开 `http://localhost:5173/settings/model-routes`，检查各任务实际使用的模型路由
 3. 如果要启用知识库，打开 `http://localhost:5173/knowledge?tab=settings`，保存 Embedding / Collection 设置
+
+### 3.1 Docker / VPS 启动
+
+如果你要部署到 Linux VPS，先准备好 `server/.env`，最少建议：
+
+```env
+HOST=0.0.0.0
+PORT=3000
+ALLOW_LAN=true
+RAG_ENABLED=false
+```
+
+然后执行：
+
+```bash
+docker compose up -d --build
+```
+
+启动后：
+
+- 前端：`http://你的服务器IP:5173`
+- 后端：`http://你的服务器IP:3000`
+
+如果后面要接域名，建议再在外层加 Nginx / Caddy 做反向代理和 HTTPS。
 
 ### 4. 如果你使用 Qdrant Cloud
 
