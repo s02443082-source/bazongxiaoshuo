@@ -79,7 +79,7 @@ function formatCheckpoint(checkpoint: NovelWorkflowCheckpoint | null | undefined
     return "卷战略已就绪";
   }
   if (checkpoint === "front10_ready") {
-    return "前 10 章可开写";
+    return "前 2 章可开写";
   }
   if (checkpoint === "chapter_batch_ready") {
     return "章节批量资源已就绪";
@@ -322,7 +322,7 @@ export default function TaskCenterPage() {
       await invalidateTaskQueries();
       const task = response.data;
       if (variables.mode === "auto_execute_front10") {
-        toast.success("已继续自动执行前 10 章。");
+        toast.success("已继续自动执行前 2 章。");
         return;
       }
       if (task?.kind && task.id) {
@@ -729,7 +729,7 @@ export default function TaskCenterPage() {
                         })}
                       disabled={continueWorkflowMutation.isPending}
                     >
-                      {selectedTask.resumeAction ?? "继续自动执行前 10 章"}
+                      {selectedTask.resumeAction ?? "继续自动执行前 2 章"}
                     </Button>
                   ) : null}
                   {selectedTask.kind === "novel_workflow"

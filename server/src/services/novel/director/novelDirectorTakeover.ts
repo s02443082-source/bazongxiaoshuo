@@ -43,7 +43,7 @@ const DIRECTOR_TAKEOVER_STAGE_META: Record<DirectorTakeoverStartPhase, Pick<Dire
   },
   structured_outline: {
     label: "从节奏 / 拆章开始",
-    description: "适合卷战略已确定，只想让 AI 接手第 1 卷节奏板、章节列表和前 10 章细化。",
+    description: "适合卷战略已确定，只想让 AI 接手第 1 卷节奏板、章节列表和前 2 章细化。",
   },
 };
 

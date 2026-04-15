@@ -497,7 +497,7 @@ export class ChapterWritingGraph {
           sceneResults: generated?.sceneResults ?? [],
           sceneContents: generated?.sceneContents ?? [],
           options: input.options,
-          enforceLength: false,
+          enforceLength: true,
         });
         const normalized = await this.continuityNode(
           input.novelId,

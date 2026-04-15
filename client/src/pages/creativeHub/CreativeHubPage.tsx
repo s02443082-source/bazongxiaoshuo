@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ApiResponse } from "@ai-novel/shared/types/api";
 import type { CreativeHubResourceBinding, CreativeHubThread } from "@ai-novel/shared/types/creativeHub";
 import type { LangChainMessage } from "@assistant-ui/react-langgraph";
+import { Sparkles } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import {
   createCreativeHubThread,
@@ -384,9 +385,33 @@ export default function CreativeHubPage() {
   }, [activeThreadId, productionStatus?.worldId, queryClient, rawThreadBindings]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      <div className="rounded-[1.5rem] border border-amber-200/80 bg-[radial-gradient(circle_at_top_left,rgba(251,146,60,0.14),transparent_30%),linear-gradient(135deg,rgba(255,248,241,0.98),rgba(255,255,255,0.98),rgba(255,251,235,0.95))] p-5 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge className="border-0 bg-slate-900 text-white hover:bg-slate-900">创作中枢</Badge>
+              <Badge variant="outline" className="border-amber-200 bg-white/80 text-amber-800">导演式协作</Badge>
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-3xl font-semibold tracking-tight text-slate-950">让创意对话变成可执行的创作主线。</h1>
+              <p className="max-w-3xl text-sm leading-7 text-slate-600">
+                线程、上下文资源、阻塞确认和执行结果都收在同一块工作区里，这里更像你的导演台，而不是普通聊天窗口。
+              </p>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/80 bg-white/80 px-4 py-3 shadow-sm">
+            <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+              <Sparkles className="h-4 w-4 text-amber-500" />
+              当前模型
+            </div>
+            <div className="mt-1 text-xs text-muted-foreground">{llm.provider} · {llm.model}</div>
+          </div>
+        </div>
+      </div>
+
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="secondary">创作中枢</Badge>
+        <Badge variant="secondary" className="border-0 bg-amber-50 text-amber-800">上下文绑定</Badge>
         {currentThread ? <Badge variant="outline">{currentThread.title}</Badge> : null}
         {currentBindings.novelId ? <Badge variant="outline">小说 {currentBindings.novelId}</Badge> : null}
         {currentBindings.worldId ? <Badge variant="outline">世界观 {currentBindings.worldId}</Badge> : null}
@@ -404,7 +429,7 @@ export default function CreativeHubPage() {
         ) : null}
       </div>
 
-      <div className="grid min-h-[72vh] gap-4 lg:h-[calc(100vh-11rem)] lg:grid-cols-[240px_minmax(0,1fr)_320px]">
+      <div className="grid min-h-[72vh] gap-4 lg:h-[calc(100vh-13.5rem)] lg:grid-cols-[260px_minmax(0,1fr)_340px]">
         <div className="min-h-0">
           <CreativeHubThreadList
             threads={threads}

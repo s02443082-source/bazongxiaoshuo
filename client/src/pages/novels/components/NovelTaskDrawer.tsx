@@ -57,7 +57,7 @@ function formatCheckpoint(checkpoint: NovelWorkflowCheckpoint | null | undefined
     return "卷战略 / 卷骨架待审核";
   }
   if (checkpoint === "front10_ready") {
-    return "前 10 章可开写";
+    return "前 2 章可开写";
   }
   if (checkpoint === "chapter_batch_ready") {
     return "章节资源已就绪";

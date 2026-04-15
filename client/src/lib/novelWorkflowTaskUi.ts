@@ -27,10 +27,10 @@ export function formatWorkflowCheckpoint(checkpoint?: NovelWorkflowCheckpoint | 
     return "卷战略待审核";
   }
   if (checkpoint === "front10_ready") {
-    return "前 10 章可开写";
+    return "前 2 章可开写";
   }
   if (checkpoint === "chapter_batch_ready") {
-    return "前 10 章自动执行已暂停";
+    return "前 2 章自动执行已暂停";
   }
   if (checkpoint === "replan_required") {
     return "等待重规划";
@@ -54,13 +54,13 @@ export function getWorkflowBadge(task?: NovelAutoDirectorTaskSummary | null): {
     && (task.checkpointType === "front10_ready" || task.checkpointType === "chapter_batch_ready")
   ) {
     return {
-      label: displayStatus ?? "前 10 章自动执行中",
+      label: displayStatus ?? "前 2 章自动执行中",
       variant: "default",
     };
   }
   if ((task.status === "failed" || task.status === "cancelled") && task.checkpointType === "chapter_batch_ready") {
     return {
-      label: displayStatus ?? (task.status === "failed" ? "前 10 章自动执行已暂停" : "前 10 章自动执行已取消"),
+      label: displayStatus ?? (task.status === "failed" ? "前 2 章自动执行已暂停" : "前 2 章自动执行已取消"),
       variant: task.status === "failed" ? "destructive" : "outline",
     };
   }
@@ -108,10 +108,10 @@ export function getWorkflowDescription(task?: NovelAutoDirectorTaskSummary | nul
     (task.status === "queued" || task.status === "running")
     && (task.checkpointType === "front10_ready" || task.checkpointType === "chapter_batch_ready")
   ) {
-    return `AI 正在后台继续执行前 10 章，当前进度 ${Math.round(task.progress * 100)}%。`;
+    return `AI 正在后台继续执行前 2 章，当前进度 ${Math.round(task.progress * 100)}%。`;
   }
   if ((task.status === "failed" || task.status === "cancelled") && task.checkpointType === "chapter_batch_ready") {
-    return "前 10 章自动执行在批量阶段暂停了，建议先查看任务，再决定是否继续自动执行。";
+    return "前 2 章自动执行在批量阶段暂停了，建议先查看任务，再决定是否继续自动执行。";
   }
   if (task.blockingReason?.trim()) {
     return task.blockingReason.trim();

@@ -143,7 +143,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "border-r bg-muted/20 p-3 transition-[width] duration-200",
+        "border-r bg-[linear-gradient(180deg,rgba(255,251,247,0.92),rgba(255,255,255,0.86))] p-3 transition-[width] duration-200",
         collapsed ? "w-[72px]" : "w-64",
       )}
     >
@@ -160,6 +160,14 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </Button>
       </div>
+
+      {!collapsed ? (
+        <div className="mb-4 rounded-2xl border border-amber-100 bg-[linear-gradient(180deg,rgba(255,247,237,0.95),rgba(255,255,255,0.92))] p-4 shadow-sm">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-700/80">Director Flow</div>
+          <div className="mt-2 text-sm font-semibold text-slate-900">把一本书从灵感推进到章节执行</div>
+          <div className="mt-1 text-xs leading-5 text-muted-foreground">首页、项目、资产和任务被收在同一条创作主线里。</div>
+        </div>
+      ) : null}
 
       <nav className="space-y-4">
         {navGroups.map((group) => (
@@ -181,12 +189,12 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   {({ isActive }) => (
                     <div
                       className={cn(
-                        "relative flex items-center rounded-md text-sm transition-colors",
-                        collapsed ? "justify-center px-2 py-2.5" : "py-2 pl-4 pr-2",
+                        "relative flex items-center rounded-2xl text-sm transition-all",
+                        collapsed ? "justify-center px-2 py-2.5" : "py-2.5 pl-4 pr-3",
                         isActive
-                          ? "bg-accent/90 font-semibold text-accent-foreground"
-                          : "text-foreground hover:bg-accent hover:text-accent-foreground",
-                        isNovelEntry && !collapsed && (isActive ? "ring-1 ring-primary/20" : "bg-primary/5 hover:bg-primary/10"),
+                          ? "bg-[linear-gradient(135deg,rgba(255,237,213,0.92),rgba(255,255,255,0.95))] font-semibold text-slate-900 shadow-sm"
+                          : "text-foreground hover:bg-white/80 hover:text-slate-900",
+                        isNovelEntry && !collapsed && (isActive ? "ring-1 ring-amber-200" : "bg-primary/[0.04] hover:bg-primary/[0.06]"),
                       )}
                     >
                       <span

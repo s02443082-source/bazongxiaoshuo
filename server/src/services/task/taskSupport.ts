@@ -8,12 +8,14 @@ export function normalizeFailureSummary(summary?: string | null, fallback = "当
   return summary?.trim() || fallback;
 }
 
-export function resolveStructuredFailureSummary(summary?: string | null): {
+export function resolveStructuredFailureSummary(summary?: string | null, fallbackAvailable = false): {
+  category: string | null;
   failureCode: string | null;
   failureSummary: string | null;
 } {
   if (!summary?.trim()) {
     return {
+      category: null,
       failureCode: null,
       failureSummary: null,
     };
@@ -21,18 +23,53 @@ export function resolveStructuredFailureSummary(summary?: string | null): {
   const category = extractStructuredOutputErrorCategory(summary);
   if (!category) {
     return {
+      category: null,
       failureCode: null,
       failureSummary: null,
     };
   }
   const details = summarizeStructuredOutputFailure({
     error: summary,
-    fallbackAvailable: false,
+    fallbackAvailable,
   });
   return {
+    category,
     failureCode: details.failureCode,
     failureSummary: details.summary,
   };
+}
+
+export function buildNovelWorkflowRecoveryHint(input: {
+  status: TaskStatus;
+  lastError?: string | null;
+  currentStage?: string | null;
+  currentItemKey?: string | null;
+  fallbackAvailable?: boolean;
+}): string {
+  if (input.status !== "failed") {
+    return buildTaskRecoveryHint("novel_workflow", input.status);
+  }
+
+  const structuredFailure = resolveStructuredFailureSummary(input.lastError, input.fallbackAvailable);
+  if (!structuredFailure.failureCode) {
+    return buildTaskRecoveryHint("novel_workflow", input.status);
+  }
+
+  const isChapterPlanningStep =
+    input.currentItemKey === "chapter_list"
+    || input.currentItemKey === "beat_sheet"
+    || input.currentStage?.includes("拆章") === true
+    || input.currentStage?.includes("节奏") === true;
+
+  if (!input.fallbackAvailable) {
+    return isChapterPlanningStep
+      ? "建议前往系统设置的模型路由页启用结构化备用模型，或先把拆章任务切到结构化更稳的模型后，再从最近检查点重试。"
+      : "建议前往系统设置的模型路由页启用结构化备用模型，或切换到结构化更稳的模型后，再从最近检查点重试。";
+  }
+
+  return isChapterPlanningStep
+    ? "当前已启用结构化备用模型，建议先重试当前拆章步骤；若仍失败，可将拆章路由改到更稳的结构化模型后再继续。"
+    : "当前已启用结构化备用模型，建议先重试当前任务；若仍失败，可将对应路由切到更稳的结构化模型后再继续。";
 }
 
 export function isArchivableTaskStatus(status: TaskStatus): boolean {

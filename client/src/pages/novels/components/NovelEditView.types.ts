@@ -460,6 +460,8 @@ export interface NovelEditTakeoverState {
   currentAction?: string | null;
   checkpointLabel?: string | null;
   taskId?: string | null;
+  failureSummary?: string | null;
+  recoveryHint?: string | null;
   actions?: Array<{
     label: string;
     onClick: () => void;

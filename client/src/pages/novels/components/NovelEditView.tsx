@@ -298,6 +298,8 @@ export default function NovelEditView(props: NovelEditViewProps) {
             currentAction={takeover.currentAction}
             checkpointLabel={takeover.checkpointLabel}
             taskId={takeover.taskId}
+            failureSummary={takeover.failureSummary}
+            recoveryHint={takeover.recoveryHint}
             actions={takeover.actions}
           >
             {renderActivePanel()}

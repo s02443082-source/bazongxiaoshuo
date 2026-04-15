@@ -244,12 +244,12 @@ export default function CreativeHubSidebar({
   const blockerActionPrompt = blocker.actionPrompt ?? "";
 
   return (
-    <Card className="flex h-full min-h-0 flex-col">
+    <Card className="flex h-full min-h-0 flex-col border-amber-100 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(255,249,243,0.94))] shadow-sm">
       <CardHeader className="pb-4">
-        <CardTitle className="text-base">创作工作区</CardTitle>
+        <CardTitle className="text-base">导演侧栏</CardTitle>
       </CardHeader>
       <CardContent className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1 text-sm">
-        <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-slate-100 p-4">
+        <div className="rounded-2xl border border-amber-100 bg-gradient-to-br from-white via-amber-50/70 to-white p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <div className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">当前焦点</div>
@@ -272,7 +272,7 @@ export default function CreativeHubSidebar({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
           <div className="mb-2 text-xs font-medium text-slate-500">资源绑定</div>
           <div className="space-y-3 text-xs text-slate-700">
             <div className="space-y-1">

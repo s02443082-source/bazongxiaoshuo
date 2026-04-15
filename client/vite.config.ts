@@ -44,6 +44,13 @@ export default defineConfig({
     },
   },
   server: {
-    host: true, // 允许局域网访问（监听 0.0.0.0）
+    host: "127.0.0.1",
+    port: 5173,
+    strictPort: true,
+  },
+  preview: {
+    host: "127.0.0.1",
+    port: 5173,
+    strictPort: true,
   },
 });

@@ -18,6 +18,7 @@ import {
   buildDraftContinuationBlock,
   buildSceneContractBlock,
   countChapterCharacters,
+  mergeContinuationText,
   resolveSceneWordRange,
 } from "./chapterWritingGraphShared";
 import {
@@ -367,9 +368,11 @@ async function runSceneStreaming(input: ChapterSceneStreamInput, emitChunk: (chu
       emitChunk,
     });
     const roundText = roundOutput.content;
-    const actualWordCount = countChapterCharacters(roundText);
+    const mergedRound = mergeContinuationText(currentSceneContent, roundText);
+    const appendedText = mergedRound.content.slice(currentSceneContent.trimEnd().length);
+    const actualWordCount = countChapterCharacters(appendedText);
     if (roundText.trim()) {
-      currentSceneContent = `${currentSceneContent}${roundText}`;
+      currentSceneContent = mergedRound.content;
       sceneStatus = roundOutput.hardStopTriggered ? "generated_with_round_limit" : "generated";
     }
     if (roundOutput.hardStopTriggered) {
@@ -386,6 +389,8 @@ async function runSceneStreaming(input: ChapterSceneStreamInput, emitChunk: (chu
       trimmedAtSentenceBoundary: roundOutput.trimmedAtSentenceBoundary,
       stopReason: !roundText.trim()
         ? "empty_output"
+        : mergedRound.overlapLength >= 12 && !appendedText.trim()
+          ? "empty_output"
         : roundOutput.hardStopTriggered
           ? "hard_limit_reached"
           : roundPlan.isFinalRound

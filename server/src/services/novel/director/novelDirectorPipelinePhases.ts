@@ -171,7 +171,7 @@ function selectPreparedOutlineChapters(
       && chapter.chapterOrder <= (plan.endOrder ?? plan.startOrder ?? 1)
     ));
   }
-  return prepared.slice(0, 10);
+  return prepared.slice(0, 2);
 }
 
 function buildChapterTitleNotice(input: {

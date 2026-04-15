@@ -73,8 +73,10 @@ export default function AppLayout() {
             onToggle={() => setIsSidebarCollapsed((current) => !current)}
           />
         )}
-        <main className="h-[calc(100vh-4rem)] flex-1 overflow-y-auto p-6">
-          <Outlet />
+        <main className="h-[calc(100vh-4rem)] flex-1 overflow-y-auto p-4 sm:p-6">
+          <div className="min-h-full rounded-[1.5rem] border border-white/70 bg-white/65 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:p-6">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

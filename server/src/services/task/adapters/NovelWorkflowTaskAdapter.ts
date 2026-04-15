@@ -24,9 +24,10 @@ import {
   resumeTargetToRoute,
 } from "../../novel/workflow/novelWorkflow.shared";
 import {
-  buildTaskRecoveryHint,
+  buildNovelWorkflowRecoveryHint,
   isArchivableTaskStatus,
   normalizeFailureSummary,
+  resolveStructuredFailureSummary,
 } from "../taskSupport";
 import { toTaskTokenUsageSummary } from "../taskTokenUsageSummary";
 import {
@@ -37,6 +38,7 @@ import {
 import { buildNovelWorkflowDetailSteps } from "../novelWorkflowDetailSteps";
 import { buildWorkflowExplainability } from "../novelWorkflowExplainability";
 import { buildNovelWorkflowNextActionLabel } from "../novelWorkflowTaskSummary";
+import { getStructuredFallbackSettings } from "../../../llm/structuredFallbackSettings";
 
 function buildOwnerLabel(row: {
   novel?: { title: string } | null;
@@ -150,13 +152,20 @@ function mapSummary(row: {
   novelId: string | null;
   novel?: { title: string } | null;
   seedPayloadJson?: string | null;
-}): UnifiedTaskSummary {
+}, structuredFallbackAvailable: boolean): UnifiedTaskSummary {
   const status = row.status as TaskStatus;
   const isRecoveryInProgress = isAutoDirectorRecoveryInProgress({
     status,
     lastError: row.lastError,
   });
   const lastError = isRecoveryInProgress ? null : row.lastError;
+  const structuredFailure = status === "failed"
+    ? resolveStructuredFailureSummary(lastError, structuredFallbackAvailable)
+    : {
+      category: null,
+      failureCode: null,
+      failureSummary: null,
+    };
   const resumeTarget = normalizeWorkflowResumeTargetForCandidateSelection({
     id: row.id,
     checkpointType: row.checkpointType,
@@ -218,11 +227,19 @@ function mapSummary(row: {
     nextActionLabel: buildNovelWorkflowNextActionLabel(status, checkpointType),
     noticeCode: taskNotice?.code ?? null,
     noticeSummary: taskNotice?.summary ?? null,
-    failureCode: status === "failed" ? "NOVEL_WORKFLOW_FAILED" : null,
-    failureSummary: status === "failed"
-      ? normalizeFailureSummary(lastError, "小说主流程中断，但没有记录明确错误。")
+    failureCode: status === "failed"
+      ? (structuredFailure.failureCode ?? "NOVEL_WORKFLOW_FAILED")
       : null,
-    recoveryHint: buildTaskRecoveryHint("novel_workflow", status),
+    failureSummary: status === "failed"
+      ? (structuredFailure.failureSummary ?? normalizeFailureSummary(lastError, "小说主流程中断，但没有记录明确错误。"))
+      : null,
+    recoveryHint: buildNovelWorkflowRecoveryHint({
+      status,
+      lastError,
+      currentStage: row.currentStage,
+      currentItemKey: row.currentItemKey,
+      fallbackAvailable: structuredFallbackAvailable,
+    }),
     tokenUsage: toTaskTokenUsageSummary({
       promptTokens: row.promptTokens,
       completionTokens: row.completionTokens,
@@ -256,6 +273,10 @@ export class NovelWorkflowTaskAdapter {
     keyword?: string;
     take: number;
   }): Promise<UnifiedTaskSummary[]> {
+    const structuredFallbackSettings = await getStructuredFallbackSettings();
+    const structuredFallbackAvailable = Boolean(
+      structuredFallbackSettings.enabled && structuredFallbackSettings.model.trim().length > 0,
+    );
     const archivedIds = await getArchivedTaskIds("novel_workflow");
     const rows = await prisma.novelWorkflowTask.findMany({
       where: {
@@ -337,7 +358,7 @@ export class NovelWorkflowTaskAdapter {
         && candidate.updatedAt >= row.updatedAt);
     });
 
-    return visibleRows.map((row) => mapSummary(row));
+    return visibleRows.map((row) => mapSummary(row, structuredFallbackAvailable));
   }
 
   async detail(id: string): Promise<UnifiedTaskDetail | null> {
@@ -345,6 +366,10 @@ export class NovelWorkflowTaskAdapter {
       return null;
     }
     await this.workflowService.healAutoDirectorTaskState(id);
+    const structuredFallbackSettings = await getStructuredFallbackSettings();
+    const structuredFallbackAvailable = Boolean(
+      structuredFallbackSettings.enabled && structuredFallbackSettings.model.trim().length > 0,
+    );
 
     const row = await prisma.novelWorkflowTask.findUnique({
       where: { id },
@@ -360,7 +385,7 @@ export class NovelWorkflowTaskAdapter {
       return null;
     }
 
-    const summary = mapSummary(row);
+    const summary = mapSummary(row, structuredFallbackAvailable);
     const resumeTarget = normalizeWorkflowResumeTargetForCandidateSelection({
       id: row.id,
       checkpointType: row.checkpointType,

@@ -8,6 +8,7 @@ import type {
 } from "@ai-novel/shared/types/novel";
 import type { SSEFrame } from "@ai-novel/shared/types/api";
 import type { ChapterRuntimePackage } from "@ai-novel/shared/types/chapterRuntime";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,136 @@ function WorkspaceNotice(props: { title: string; description: string }) {
     <div className="rounded-2xl border border-amber-200 bg-amber-50/90 p-4 text-sm text-amber-900">
       <div className="font-medium">{props.title}</div>
       <div className="mt-1 leading-6 text-amber-800">{props.description}</div>
+    </div>
+  );
+}
+
+function LiveWritingViewport(props: {
+  content: string;
+  isStreaming: boolean;
+}) {
+  const { content, isStreaming } = props;
+  const [visibleContent, setVisibleContent] = useState(content);
+  const [autoFollow, setAutoFollow] = useState(true);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isStreaming) {
+      setVisibleContent(content);
+      return;
+    }
+
+    setVisibleContent((current) => {
+      if (!content.startsWith(current)) {
+        return content;
+      }
+      return current;
+    });
+  }, [content, isStreaming]);
+
+  useEffect(() => {
+    if (!isStreaming) {
+      return;
+    }
+    if (visibleContent.length >= content.length) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setVisibleContent((current) => {
+        if (!content.startsWith(current)) {
+          return content;
+        }
+        const remaining = content.length - current.length;
+        const chunkSize = remaining > 480 ? 5 : remaining > 240 ? 4 : remaining > 120 ? 3 : remaining > 48 ? 2 : 1;
+        return content.slice(0, Math.min(content.length, current.length + chunkSize));
+      });
+    }, 16);
+
+    return () => window.clearTimeout(timer);
+  }, [content, visibleContent, isStreaming]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || !autoFollow) {
+      return;
+    }
+    viewport.scrollTo({
+      top: viewport.scrollHeight,
+      behavior: isStreaming ? "smooth" : "auto",
+    });
+  }, [visibleContent, autoFollow, isStreaming]);
+
+  const handleScroll = () => {
+    const viewport = viewportRef.current;
+    if (!viewport) {
+      return;
+    }
+    const distanceToBottom = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
+    setAutoFollow(distanceToBottom < 80);
+  };
+
+  const displayContent = isStreaming ? visibleContent : content;
+
+  return (
+    <div className="relative">
+      <div
+        ref={viewportRef}
+        onScroll={handleScroll}
+        className="max-h-[760px] overflow-y-auto px-6 py-6 lg:px-10"
+        style={{ scrollPaddingBottom: "10rem" }}
+      >
+        {displayContent ? (
+          <>
+            <article className="mx-auto max-w-[46rem] text-[15px] leading-9 text-foreground">
+            <div className="mb-4 flex items-center gap-2 text-xs text-muted-foreground">
+              {isStreaming ? (
+                <>
+                  <span className="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_0_6px_rgba(16,185,129,0.12)] animate-pulse" />
+                  <span>AI 正在逐步写入正文</span>
+                </>
+              ) : (
+                <span>正文已固定保存</span>
+              )}
+            </div>
+            <div className="rounded-[32px] border border-border/70 bg-gradient-to-b from-background via-background to-amber-50/30 px-10 py-10 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]">
+              <MarkdownViewer content={displayContent} />
+              {isStreaming ? (
+                <div className="mt-4 flex items-center gap-2 text-sm text-amber-700">
+                  <span className="inline-block h-5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  <span>写作进行中</span>
+                </div>
+              ) : null}
+            </div>
+            </article>
+            <div aria-hidden className="h-28 lg:h-36" />
+          </>
+        ) : (
+          <div className="mx-auto max-w-3xl rounded-3xl border border-dashed bg-muted/15 p-8 text-sm leading-7 text-muted-foreground">
+            当前章节还没有正文。建议先补章节计划或任务单，然后从右侧直接执行“写本章”。
+          </div>
+        )}
+      </div>
+
+      {isStreaming && !autoFollow ? (
+        <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center">
+          <Button
+            type="button"
+            size="sm"
+            className="pointer-events-auto rounded-full shadow-lg"
+            onClick={() => {
+              const viewport = viewportRef.current;
+              if (!viewport) {
+                return;
+              }
+              viewport.scrollTo({ top: viewport.scrollHeight, behavior: "smooth" });
+              setAutoFollow(true);
+            }}
+          >
+            回到最新生成位置
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -271,17 +402,7 @@ export default function ChapterExecutionResultPanel(props: ChapterExecutionResul
               </div>
             </div>
 
-            <div className="max-h-[760px] overflow-y-auto px-6 py-6 lg:px-10">
-              {contentPanelContent ? (
-                <article className="mx-auto max-w-4xl text-[15px] leading-8 text-foreground">
-                  <MarkdownViewer content={contentPanelContent} />
-                </article>
-              ) : (
-                <div className="mx-auto max-w-3xl rounded-3xl border border-dashed bg-muted/15 p-8 text-sm leading-7 text-muted-foreground">
-                  当前章节还没有正文。建议先补章节计划或任务单，然后从右侧直接执行“写本章”。
-                </div>
-              )}
-            </div>
+            <LiveWritingViewport content={contentPanelContent} isStreaming={isSelectedChapterStreaming} />
           </div>
 
           {lengthControl ? (

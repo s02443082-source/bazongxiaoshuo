@@ -24,6 +24,8 @@ export interface AITakeoverContainerProps {
   currentAction?: string | null;
   checkpointLabel?: string | null;
   taskId?: string | null;
+  failureSummary?: string | null;
+  recoveryHint?: string | null;
   actions?: AITakeoverAction[];
   children?: ReactNode;
 }
@@ -101,6 +103,8 @@ export default function AITakeoverContainer({
   currentAction,
   checkpointLabel,
   taskId,
+  failureSummary,
+  recoveryHint,
   actions = [],
   children,
 }: AITakeoverContainerProps) {
@@ -180,6 +184,18 @@ export default function AITakeoverContainer({
           ) : null}
           {checkpointLabel ? (
             <div className="mt-2 text-xs text-muted-foreground">最近检查点：{checkpointLabel}</div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {failureSummary ? (
+        <div className="rounded-xl border border-destructive/25 bg-destructive/5 p-4">
+          <div className="text-sm font-semibold text-destructive">当前阻塞原因</div>
+          <div className="mt-2 text-sm leading-6 text-destructive/90">{failureSummary}</div>
+          {recoveryHint ? (
+            <div className="mt-3 rounded-lg border border-destructive/15 bg-background/75 px-3 py-2 text-xs text-destructive/80">
+              建议处理：{recoveryHint}
+            </div>
           ) : null}
         </div>
       ) : null}

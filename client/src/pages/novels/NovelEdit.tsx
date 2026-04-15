@@ -866,6 +866,14 @@ export default function NovelEdit() {
           ? `${autoExecutionScopeLabel}自动执行中`
           : formatTakeoverCheckpoint(task.checkpointType, task),
       taskId: task.id,
+      failureSummary: consistencyIssue === "missing_characters"
+        ? "导演流程虽然完成了当前阶段，但角色资产没有完整落库。"
+        : consistencyIssue === "missing_chapters"
+          ? "导演流程虽然推进到了可开写阶段，但章节资源没有成功同步到执行区。"
+          : task.failureSummary ?? task.lastError ?? null,
+      recoveryHint: consistencyIssue
+        ? "点击“补齐导演产物”继续修复当前阶段。"
+        : task.recoveryHint ?? null,
       actions,
     };
   }, [

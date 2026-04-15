@@ -51,8 +51,8 @@ const CHECKPOINT_DISPLAY_STATUS: Record<NovelWorkflowCheckpoint, string> = {
   book_contract_ready: "Book Contract 已就绪",
   character_setup_required: "角色准备待审核",
   volume_strategy_ready: "卷战略待审核",
-  front10_ready: "前 10 章已可进入章节执行",
-  chapter_batch_ready: "前 10 章自动执行已暂停",
+  front10_ready: "前 2 章已可进入章节执行",
+  chapter_batch_ready: "前 2 章自动执行已暂停",
   replan_required: "等待处理重规划",
   workflow_completed: "自动导演已完成",
 };
@@ -62,8 +62,8 @@ const CHECKPOINT_BLOCKING_REASON: Record<NovelWorkflowCheckpoint, string> = {
   book_contract_ready: "Book Contract 已生成，需先确认核心承诺后再继续后续规划。",
   character_setup_required: "角色准备已生成，需先审核角色阵容后再继续推进。",
   volume_strategy_ready: "卷战略与卷骨架已就绪，需先确认卷级推进方案后再继续。",
-  front10_ready: "前 10 章细化已准备完成，你可以进入章节执行，或继续让系统自动执行前 10 章。",
-  chapter_batch_ready: "前 10 章自动执行在批量阶段暂停了，建议先看结果，再决定是否继续自动执行剩余章节。",
+  front10_ready: "前 2 章细化已准备完成，你可以进入章节执行，或继续让系统自动执行前 2 章。",
+  chapter_batch_ready: "前 2 章自动执行在批量阶段暂停了，建议先看结果，再决定是否继续自动执行剩余章节。",
   replan_required: "审计结果要求先处理重规划，后续章节才能继续推进。",
   workflow_completed: "默认主流程已跑通，你可以直接进入章节执行继续写作。",
 };
@@ -123,7 +123,7 @@ export function buildWorkflowResumeAction(
       return "查看卷战略";
     }
     if (checkpointType === "front10_ready") {
-      return "继续自动执行前 10 章";
+      return "继续自动执行前 2 章";
     }
     if (checkpointType === "chapter_batch_ready") {
       return "继续自动执行剩余章节";
@@ -138,7 +138,7 @@ export function buildWorkflowResumeAction(
   }
   if (status === "failed" || status === "cancelled") {
     if (checkpointType === "front10_ready") {
-      return "继续自动执行前 10 章";
+      return "继续自动执行前 2 章";
     }
     if (checkpointType === "chapter_batch_ready") {
       return "继续自动执行剩余章节";
@@ -168,7 +168,7 @@ function buildDisplayStatus(input: WorkflowExplainabilityInput): string | null {
     (input.status === "queued" || input.status === "running")
     && (input.checkpointType === "front10_ready" || input.checkpointType === "chapter_batch_ready")
   ) {
-    return "前 10 章自动执行中";
+    return "前 2 章自动执行中";
   }
   if (input.status === "waiting_approval") {
     return input.checkpointType
@@ -186,13 +186,13 @@ function buildDisplayStatus(input: WorkflowExplainabilityInput): string | null {
   }
   if (input.status === "failed") {
     if (input.checkpointType === "chapter_batch_ready") {
-      return "前 10 章自动执行已暂停";
+      return "前 2 章自动执行已暂停";
     }
     return "自动导演执行失败";
   }
   if (input.status === "cancelled") {
     if (input.checkpointType === "chapter_batch_ready") {
-      return "前 10 章自动执行已取消";
+      return "前 2 章自动执行已取消";
     }
     return "自动导演已取消";
   }
@@ -219,13 +219,13 @@ function buildBlockingReason(input: WorkflowExplainabilityInput): string | null 
   }
   if (input.status === "failed") {
     if (input.checkpointType === "chapter_batch_ready") {
-      return "前 10 章自动执行在批量阶段中断了，建议从最近健康阶段继续恢复。";
+      return "前 2 章自动执行在批量阶段中断了，建议从最近健康阶段继续恢复。";
     }
     return normalizeFailureSummary(input.lastError, "当前阶段执行失败，建议从最近检查点恢复。");
   }
   if (input.status === "cancelled") {
     if (input.checkpointType === "chapter_batch_ready") {
-      return "前 10 章自动执行已取消，如需继续可从最近健康阶段恢复。";
+      return "前 2 章自动执行已取消，如需继续可从最近健康阶段恢复。";
     }
     return "任务已取消，如仍需继续，可从最近检查点恢复。";
   }

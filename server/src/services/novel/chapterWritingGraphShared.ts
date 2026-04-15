@@ -19,6 +19,47 @@ export function joinSceneContents(sceneContents: string[]): string {
     .trim();
 }
 
+export function mergeContinuationText(existing: string, incoming: string): {
+  content: string;
+  overlapLength: number;
+} {
+  const base = existing.trimEnd();
+  const addition = incoming.trimStart();
+  if (!base) {
+    return {
+      content: addition,
+      overlapLength: 0,
+    };
+  }
+  if (!addition) {
+    return {
+      content: base,
+      overlapLength: 0,
+    };
+  }
+  if (base.endsWith(addition)) {
+    return {
+      content: base,
+      overlapLength: addition.length,
+    };
+  }
+
+  const maxOverlap = Math.min(base.length, addition.length, 240);
+  for (let length = maxOverlap; length >= 12; length -= 1) {
+    if (base.slice(-length) === addition.slice(0, length)) {
+      return {
+        content: `${base}${addition.slice(length)}`.trim(),
+        overlapLength: length,
+      };
+    }
+  }
+
+  return {
+    content: `${base}${addition}`.trim(),
+    overlapLength: 0,
+  };
+}
+
 export function resolveSceneWordRange(targetWordCount: number): {
   targetWordCount: number;
   minWordCount: number;

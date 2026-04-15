@@ -25,8 +25,8 @@ const AUTO_EXECUTION_SCOPE_OPTIONS: Array<{
 }> = [
   {
     value: "front10",
-    label: "默认前 10 章",
-    description: "适合新书起盘，AI 会直接把前 10 章写作、审校和修复跑完。",
+    label: "默认前 2 章",
+    description: "适合先验证模型稳定性，AI 会先把前 2 章写作、审校和修复跑完。",
   },
   {
     value: "chapter_range",
@@ -113,7 +113,7 @@ export function buildDirectorAutoExecutionPlanLabel(
   if (plan?.mode === "volume") {
     return `第 ${normalizePositiveInteger(plan.volumeOrder, 1)} 卷`;
   }
-  return "前 10 章";
+  return "前 2 章";
 }
 
 interface DirectorAutoExecutionPlanFieldsProps {

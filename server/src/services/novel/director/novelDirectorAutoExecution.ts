@@ -60,7 +60,7 @@ export function buildDirectorAutoExecutionScopeLabel(
     const volumeLabel = fallbackVolumeTitle?.trim() ? ` · ${fallbackVolumeTitle.trim()}` : "";
     return `第 ${normalized.volumeOrder} 卷${volumeLabel}`;
   }
-  return `前 ${Math.max(1, fallbackTotalChapterCount ?? 10)} 章`;
+  return `前 ${Math.max(1, fallbackTotalChapterCount ?? 2)} 章`;
 }
 
 export function buildDirectorAutoExecutionScopeLabelFromState(
@@ -75,7 +75,7 @@ export function buildDirectorAutoExecutionScopeLabelFromState(
 
 export function resolveDirectorAutoExecutionRange(
   chapters: DirectorAutoExecutionChapterRef[],
-  preferredChapterCount = 10,
+  preferredChapterCount = 2,
 ): DirectorAutoExecutionRange | null {
   const selected = chapters
     .slice()
