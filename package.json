@@ -14,8 +14,9 @@
   ],
   "scripts": {
     "dev": "node scripts/run-with-log.cjs --name dev -- pnpm dev:raw",
-    "dev:raw": "concurrently \"pnpm dev:shared\" \"pnpm dev:server\" \"pnpm dev:client:wait\"",
+    "dev:raw": "concurrently \"pnpm dev:shared\" \"pnpm dev:server\" \"pnpm dev:client\"",
     "dev:log": "node scripts/run-with-log.cjs --name dev -- pnpm dev:raw",
+    "prisma:generate": "pnpm --filter @ai-novel/server prisma:generate",
     "dev:shared": "pnpm --filter @ai-novel/shared dev",
     "dev:server": "pnpm --filter @ai-novel/server dev",
     "dev:server:log": "node scripts/run-with-log.cjs --name server -- pnpm --filter @ai-novel/server dev",
@@ -29,8 +30,8 @@
     "start:server": "pnpm --filter @ai-novel/server start",
     "preview:client": "pnpm --filter @ai-novel/client preview --host 0.0.0.0 --port 5173",
     "start:prod": "bash -lc 'pnpm --filter @ai-novel/server prisma:generate && pnpm --filter @ai-novel/server prisma:push && (pnpm start:server &) && pnpm preview:client'",
-    "build": "pnpm --filter @ai-novel/shared build && pnpm --filter @ai-novel/server build && pnpm --filter @ai-novel/client build",
-    "typecheck": "pnpm --filter @ai-novel/shared build && pnpm --filter @ai-novel/server typecheck && pnpm --filter @ai-novel/client typecheck",
+    "build": "pnpm prisma:generate && pnpm --filter @ai-novel/shared build && pnpm --filter @ai-novel/server build && pnpm --filter @ai-novel/client build",
+    "typecheck": "pnpm prisma:generate && pnpm --filter @ai-novel/shared build && pnpm --filter @ai-novel/server typecheck && pnpm --filter @ai-novel/client typecheck",
     "lint": "pnpm --filter @ai-novel/shared lint && pnpm --filter @ai-novel/server lint && pnpm --filter @ai-novel/client lint"
   },
   "pnpm": {

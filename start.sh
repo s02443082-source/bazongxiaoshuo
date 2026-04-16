@@ -16,6 +16,11 @@ if [ ! -f "server/.env" ]; then
   echo "Created server/.env from template. Review it before exposing the app publicly."
 fi
 
+if [ ! -f "client/.env" ]; then
+  cp "client/.env.example" "client/.env"
+  echo "Created client/.env from template."
+fi
+
 if grep -q '^RAG_ENABLED=true' "server/.env"; then
   echo "Tip: if you do not use Qdrant yet, set RAG_ENABLED=false in server/.env for easier first run."
 fi

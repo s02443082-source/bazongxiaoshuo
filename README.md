@@ -46,6 +46,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 - 自动创建 `client/.env`
 - 默认把 `RAG_ENABLED` 调成 `false`，避免首次启动就卡在 Qdrant
 - 安装依赖并执行一次 `pnpm build`
+- 构建前会先自动生成 Prisma Client，避免首次安装时直接遇到一串 TypeScript / Prisma 类型错误
 
 完成后，本地开发直接启动：
 
@@ -58,6 +59,14 @@ bash ./start.sh
 ```bat
 start.bat
 ```
+
+如果你不是走安装脚本，而是手动执行构建，也建议优先用根目录命令：
+
+```bash
+pnpm build
+```
+
+根目录的 `build` / `typecheck` 现在都会先自动执行一次 Prisma Client 生成；不要一上来直接在未准备好的环境里单独跑 `server` 的 TypeScript 构建。
 
 
 
