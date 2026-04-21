@@ -5,14 +5,14 @@ services:
       dockerfile: Dockerfile
     container_name: novel-director
     ports:
-      - "3000:3000"
+      - "3001:3001"
       - "5173:5173"
     env_file:
       - server/.env
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
-      PORT: 3000
+      PORT: 3001
       ALLOW_LAN: "true"
     volumes:
       - ./server/data:/app/server/data

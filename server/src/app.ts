@@ -171,7 +171,7 @@ async function bootstrap(): Promise<void> {
   }
 
   const app = createApp();
-  const port = Number(process.env.PORT ?? 3000);
+  const port = Number(process.env.PORT ?? 3001);
   const allowLan = parseEnvFlag(process.env.ALLOW_LAN, process.env.NODE_ENV !== "production");
   const host = process.env.HOST ?? (allowLan ? "0.0.0.0" : "localhost");
   ragServices.ragWorker.start();

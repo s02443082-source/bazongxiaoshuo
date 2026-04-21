@@ -1,4 +1,5 @@
 const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
+const DEFAULT_API_PORT = "3001";
 
 function isLoopbackHost(hostname: string | null | undefined): boolean {
   return Boolean(hostname) && LOOPBACK_HOSTS.has(String(hostname).toLowerCase());
@@ -11,10 +12,10 @@ function trimTrailingSlash(value: string): string {
 function resolveApiBaseUrl(): string {
   const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
   if (!import.meta.env.DEV || typeof window === "undefined") {
-    return configuredBaseUrl || "http://localhost:3000/api";
+    return configuredBaseUrl || `http://localhost:${DEFAULT_API_PORT}/api`;
   }
 
-  const inferredBaseUrl = `${window.location.protocol}//${window.location.hostname}:3000/api`;
+  const inferredBaseUrl = `${window.location.protocol}//${window.location.hostname}:${DEFAULT_API_PORT}/api`;
   if (!configuredBaseUrl) {
     return inferredBaseUrl;
   }
@@ -26,7 +27,7 @@ function resolveApiBaseUrl(): string {
     }
     parsed.hostname = window.location.hostname;
     if (!parsed.port) {
-      parsed.port = "3000";
+      parsed.port = DEFAULT_API_PORT;
     }
     return trimTrailingSlash(parsed.toString());
   } catch {

@@ -66,7 +66,7 @@ Docker / VPS:
 
 Then open:
   Frontend: http://127.0.0.1:5173
-  Backend:  http://127.0.0.1:3000
+  Backend:  http://127.0.0.1:3001
 
 Remember to add your model API key in the web settings page before real writing.
 EOF

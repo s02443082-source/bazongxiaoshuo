@@ -143,7 +143,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "border-r bg-[linear-gradient(180deg,rgba(255,251,247,0.92),rgba(255,255,255,0.86))] p-3 transition-[width] duration-200",
+        "h-full shrink-0 overflow-y-auto border-r bg-[linear-gradient(180deg,rgba(255,251,247,0.92),rgba(255,255,255,0.86))] p-3 transition-[width] duration-200",
         collapsed ? "w-[72px]" : "w-64",
       )}
     >

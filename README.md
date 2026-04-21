@@ -398,14 +398,14 @@ Copy-Item server/.env.example server/.env
 因为前端开发模式下默认会把 API 指到：
 
 ```text
-http(s)://当前页面 hostname:3000/api
+http(s)://当前页面 hostname:3001/api
 ```
 
 这也包括“同一台机器启动服务，然后用局域网 IP 在别的设备上访问”的场景。
 例如页面开在 `http://192.168.0.37:5173`，前端默认会自动把 API 指到：
 
 ```text
-http://192.168.0.37:3000/api
+http://192.168.0.37:3001/api
 ```
 
 只有在这些场景下，才建议创建 `client/.env`：
@@ -414,7 +414,7 @@ http://192.168.0.37:3000/api
 - 你想把前端显式指向别的 API 地址
 - 你需要固定 `VITE_API_BASE_URL`
 
-如果你已经复制了 `client/.env.example`，又发现浏览器请求都跑到了 `http://localhost:3000/api`，通常就是因为你把 API 显式固定死了。对同机 / 局域网访问，建议直接删除或注释掉 `VITE_API_BASE_URL`。
+如果你已经复制了 `client/.env.example`，又发现浏览器请求都跑到了错误的接口地址，优先检查 `VITE_API_BASE_URL` 是否和后端端口一致。
 
 示例：
 
@@ -429,8 +429,8 @@ Copy-Item client/.env.example client/.env
 内容通常只需要：
 
 ```env
-# 同机 / 局域网访问时，通常不需要这一行
-# VITE_API_BASE_URL=http://localhost:3000/api
+# 默认开发后端：
+VITE_API_BASE_URL=http://127.0.0.1:3001/api
 ```
 
 #### 2.3 模型供应商并不一定要写死在 env
@@ -473,8 +473,8 @@ start.bat
 默认情况下：
 
 - 前端：`http://localhost:5173`
-- 后端：`http://localhost:3000`
-- API：`http://localhost:3000/api`
+- 后端：`http://localhost:3001`
+- API：`http://localhost:3001/api`
 
 首次启动服务端时，会自动执行 Prisma generate 和 `db push`。
 只有在你自己修改了 Prisma schema，或者要处理正式迁移流程时，才需要手动使用 Prisma / 数据库相关命令。
@@ -491,7 +491,7 @@ start.bat
 
 ```env
 HOST=0.0.0.0
-PORT=3000
+PORT=3001
 ALLOW_LAN=true
 RAG_ENABLED=false
 ```
@@ -505,7 +505,7 @@ docker compose up -d --build
 启动后：
 
 - 前端：`http://你的服务器IP:5173`
-- 后端：`http://你的服务器IP:3000`
+- 后端：`http://你的服务器IP:3001`
 
 如果后面要接域名，建议再在外层加 Nginx / Caddy 做反向代理和 HTTPS。
 

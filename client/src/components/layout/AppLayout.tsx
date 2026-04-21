@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { matchPath, Outlet, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import Navbar from "./Navbar";
 import NovelWorkspaceRail from "./NovelWorkspaceRail";
 import Sidebar from "./Sidebar";
@@ -12,6 +13,7 @@ export default function AppLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isWorkspaceRailCollapsed, setIsWorkspaceRailCollapsed] = useState(false);
   const [workspaceNavMode, setWorkspaceNavMode] = useState<"workspace" | "project">("project");
+  const isHomeRoute = location.pathname === "/";
 
   const workspaceRoute = useMemo(() => {
     const editMatch = matchPath("/novels/:id/edit", location.pathname);
@@ -32,6 +34,7 @@ export default function AppLayout() {
   }, [location.pathname]);
 
   const isNovelWorkspace = Boolean(workspaceRoute?.novelId);
+  const shouldStretchContentShell = !isHomeRoute;
 
   useEffect(() => {
     const storedValue = window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY);
@@ -53,12 +56,12 @@ export default function AppLayout() {
   }, [isNovelWorkspace, location.pathname]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
       <Navbar
         workspaceNavMode={isNovelWorkspace ? workspaceNavMode : undefined}
         onWorkspaceNavModeChange={isNovelWorkspace ? setWorkspaceNavMode : undefined}
       />
-      <div className="flex min-h-[calc(100vh-4rem)]">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
         {isNovelWorkspace && workspaceNavMode === "workspace" && workspaceRoute ? (
           <NovelWorkspaceRail
             novelId={workspaceRoute.novelId}
@@ -73,8 +76,14 @@ export default function AppLayout() {
             onToggle={() => setIsSidebarCollapsed((current) => !current)}
           />
         )}
-        <main className="h-[calc(100vh-4rem)] flex-1 overflow-y-auto p-4 sm:p-6">
-          <div className="min-h-full rounded-[1.5rem] border border-white/70 bg-white/65 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:p-6">
+        <main className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
+          <div
+            className={cn(
+              "p-4 sm:p-6",
+              !isHomeRoute && "rounded-[1.5rem] border border-white/70 bg-white/65 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-sm",
+              shouldStretchContentShell && "min-h-full",
+            )}
+          >
             <Outlet />
           </div>
         </main>
